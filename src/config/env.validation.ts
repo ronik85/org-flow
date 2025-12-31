@@ -12,6 +12,22 @@ export class EnvironmentVariables {
   @IsInt()
   @Min(1)
   APP_PORT: number;
+
+  @IsString()
+  POSTGRES_HOST: string;
+
+  @Type(() => Number)
+  @IsInt()
+  POSTGRES_PORT: number;
+
+  @IsString()
+  POSTGRES_USER: string;
+
+  @IsString()
+  POSTGRES_PASSWORD: string;
+
+  @IsString()
+  POSTGRES_DB: string;
 }
 
 export function validate(config: Record<string, unknown>) {
