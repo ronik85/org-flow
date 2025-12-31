@@ -17,6 +17,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column({ unique: true })
+  password: string;
+
   @Column({ default: true })
   isActive: boolean;
 

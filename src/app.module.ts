@@ -6,12 +6,9 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
-  imports: [
-    ConfigRootModule,
-    // DatabaseModule,
-    UsersModule,
-  ],
+  imports: [ConfigRootModule, DatabaseModule, UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+}
