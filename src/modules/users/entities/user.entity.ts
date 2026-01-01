@@ -1,10 +1,13 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Organization } from '../../../modules/organization/entities/organization.entity';
 
 @Entity('users')
 export class User {
@@ -22,6 +25,10 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @ManyToOne(() => Organization, { nullable: true })
+  @JoinColumn({ name: 'organizationId' })
+  organization: Organization;
 
   @CreateDateColumn()
   createdAt: Date;
