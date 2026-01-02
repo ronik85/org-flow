@@ -1,7 +1,9 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -20,11 +22,15 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ unique: true })
+  @Column()
   password: string;
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Index()
+  @Column({ nullable: true })
+  organizationId: string;
 
   @ManyToOne(() => Organization, { nullable: true })
   @JoinColumn({ name: 'organizationId' })
@@ -35,4 +41,7 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }
