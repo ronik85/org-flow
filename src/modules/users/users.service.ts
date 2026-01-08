@@ -1,8 +1,7 @@
-import {
-  Injectable,
-  NotFoundException
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EmailAlreadyExistsException } from 'src/common/exceptions/email-already-exists.exception';
+import { UserNotFoundException } from 'src/common/exceptions/user-not-found.exception';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -25,7 +24,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new UserNotFoundException(id);
     }
 
     return user;
