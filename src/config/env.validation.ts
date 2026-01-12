@@ -39,7 +39,12 @@ export function validate(config: Record<string, unknown>) {
   });
 
   if (errors.length > 0) {
-    throw new Error(errors.toString());
+    const messages = errors
+      .map((e) => Object.values(e.constraints ?? {}).join(', '))
+      .join('; ');
+
+    throw new Error(`Env validation failed: ${messages}`);
   }
+
   return validatedConfig;
 }
