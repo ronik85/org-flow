@@ -6,8 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { EmailAlreadyExistsException } from '../exceptions/email-already-exists.exception';
-import { UserNotFoundException } from '../exceptions/user-not-found.exception';
+import { QueryFailedError } from 'typeorm';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -19,25 +18,63 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
 
-    if (exception instanceof UserNotFoundException) {
-      statusCode = HttpStatus.NOT_FOUND;
-      message = exception.message;
-    } else if (exception instanceof EmailAlreadyExistsException) {
-      statusCode = HttpStatus.CONFLICT;
-      message = exception.message;
-    } else if (exception instanceof HttpException) {
+    if (exception instanceof QueryFailedError) {
+      const err = exception as any;
+
+      switch (err.code) {
+        case '23505': // unique violation
+          statusCode = HttpStatus.CONFLICT;
+          message = err.detail ?? 'Already exists';
+          break;
+
+        case '23503': // foreign key violation
+          statusCode = HttpStatus.BAD_REQUEST;
+          message = err.detail ?? 'Invalid reference (foreign key violation)';
+          break;
+
+        case '23502': // not null violation
+          statusCode = HttpStatus.BAD_REQUEST;
+          message = err.detail ?? 'Missing required field';
+          break;
+
+        case '22P02': // invalid input syntax (uuid/int)
+          statusCode = HttpStatus.BAD_REQUEST;
+          message = 'Invalid input format';
+          break;
+
+        default:
+          statusCode = HttpStatus.BAD_REQUEST;
+          message = err.message;
+      }
+
+      return response.status(statusCode).json({
+        statusCode,
+        message,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+      });
+    }
+
+    if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
       const res = exception.getResponse();
+
       message =
         typeof res === 'string'
           ? res
           : ((res as any).message ?? exception.message);
-    } else {
-      statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-      message = 'Internal server error';
+
+      return response.status(statusCode).json({
+        statusCode,
+        message,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+      });
     }
 
-    response.status(statusCode).json({
+    console.error('Unhandled exception:', exception);
+
+    return response.status(statusCode).json({
       statusCode,
       message,
       timestamp: new Date().toISOString(),
