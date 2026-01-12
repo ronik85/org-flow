@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { EmailAlreadyExistsException } from 'src/common/exceptions/email-already-exists.exception';
 import { UserNotFoundException } from 'src/common/exceptions/user-not-found.exception';
 import { Repository } from 'typeorm';
@@ -14,7 +15,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  findAll() {
+  findAll(query: PaginationQueryDto) {
     return this.userRepository.find();
   }
 
