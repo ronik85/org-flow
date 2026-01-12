@@ -18,6 +18,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
 
+    // region DB error handling
     if (exception instanceof QueryFailedError) {
       const err = exception as any;
 
