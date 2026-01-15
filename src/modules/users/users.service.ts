@@ -24,18 +24,16 @@ export class UsersService {
       where: { id },
     });
 
-    if (!user) {
-      throw new UserNotFoundException(id);
-    }
+    if (!user) throw new UserNotFoundException(id);
 
     return user;
   }
 
-  async create(dto: CreateUserDto) {
-    const alreadyCreatedUser = await this.userRepository.findOne({
-      where: { email: dto.email },
-    });
-    if (alreadyCreatedUser) throw new EmailAlreadyExistsException();
+  async findByEmail(email: string) {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  async create(dto: Partial<User>) {
     const user = this.userRepository.create(dto);
     return this.userRepository.save(user);
   }
