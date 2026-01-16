@@ -7,15 +7,23 @@ import {
   Patch,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
+import { Auth } from '../auth/decorators/auth.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
-import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
-
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Auth()
+  @Get('me')
+  me(@CurrentUser() user: any) {
+    return { user };
+  }
 
   @Get()
   findAll(@Query() query: PaginationQueryDto) {
