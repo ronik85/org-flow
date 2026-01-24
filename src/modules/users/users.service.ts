@@ -11,7 +11,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   findAll(query: PaginationQueryDto) {
     return this.userRepository.find();
@@ -40,5 +40,10 @@ export class UsersService {
     const user = await this.findOne(id);
     Object.assign(user, dto);
     return this.userRepository.save(user);
+  }
+  async findById(id: string): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) throw new UserNotFoundException(id);
+    return user;
   }
 }

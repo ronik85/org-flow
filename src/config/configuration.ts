@@ -16,4 +16,8 @@ export default () => ({
     level: process.env.LOG_LEVEL || 'info',
     pretty: process.env.LOG_PRETTY !== 'false',
   },
+  auth: {
+    accessTokenTtl: process.env.ACCESS_TOKEN_TTL || '15m',
+    refreshTokenTtlDays: Number(process.env.REFRESH_TOKEN_TTL_DAYS || 7),
+  },
 });
