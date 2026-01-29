@@ -109,4 +109,21 @@ export class AuthService {
 
     return { accessToken, refreshToken: newRefreshToken };
   }
+
+  async logout(refreshToken: string) {
+    const session = await this.sessionsService.findSessionByToken(refreshToken);
+    if (!session) return;
+
+    await this.sessionsService.revokeSession(
+      session.id,
+      SessionRevokedReason.LOGOUT,
+    );
+  }
+
+  async logoutAll(userId: string) {
+    await this.sessionsService.revokeAllForUser(
+      userId,
+      SessionRevokedReason.LOGOUT_ALL,
+    );
+  }
 }

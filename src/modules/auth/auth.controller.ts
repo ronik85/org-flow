@@ -2,6 +2,7 @@ import { Body, Controller, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { Auth } from './decorators/auth.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -21,5 +22,16 @@ export class AuthController {
   async refresh(@Body('refreshToken') refreshToken: string, @Req() req) {
     const userId = req.user.userId;
     return this.authService.refreshTokens(refreshToken);
+  }
+
+  @Post('logout')
+  logout(@Body('refreshToken') refreshToken: string) {
+    return this.authService.logout(refreshToken);
+  }
+
+  @Auth()
+  @Post('logout-all')
+  logoutAll(@Req() req) {
+    return this.authService.logoutAll(req.user.userId);
   }
 }
