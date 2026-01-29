@@ -25,6 +25,10 @@ export class Session {
   @Column('uuid')
   userId: string;
 
+  @Index()
+  @Column({ unique: true })
+  tokenFingerprint: string; // SHA256 lookup key
+
   @Index({ unique: true })
   @Column()
   tokenHash: string;
@@ -46,4 +50,7 @@ export class Session {
 
   @Column({ type: 'uuid', nullable: true })
   replacedBySessionId: string | null;
+
+  @Column({ default: false })
+  isReuseDetected: boolean;
 }
